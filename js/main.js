@@ -13,7 +13,7 @@ const staffPickedProjects = [
         views: "0",
         likes: 0,
         comments: 0,
-        link: "#"
+        link: "https://playentry.org/profile/69e0978622d0b9f308c65301"
     },
     {
         id: "proj2",
@@ -166,55 +166,58 @@ function initNavHover() {
     });
 }
 
-// 스포트라이트 효과 (엔이 매크로 카드)
+// 스포트라이트 효과 (환영합니다 + 엔이 매크로 카드)
 function initSpotlight() {
     const cards = document.querySelectorAll('.project-card');
-    const targetCard = cards[1]; // 2번째 카드 = 엔이 매크로
-    if (!targetCard) return;
+    const targets = [cards[0], cards[1]]; // 1번째 + 2번째 카드
+    if (!targets[0] || !targets[1]) return;
 
     // 오버레이 생성
     const overlay = document.createElement('div');
     overlay.className = 'spotlight-overlay';
+    document.body.appendChild(overlay);
 
-    // 안내 텍스트 생성
+    // 두 카드 모두 spotlight-target
+    targets.forEach(card => card.classList.add('spotlight-target'));
+
+    // 툴팁은 두 카드 사이 아래 중앙에 배치
     const tooltip = document.createElement('div');
     tooltip.className = 'spotlight-tooltip';
     tooltip.textContent = '클릭해서 더 알아보기';
 
-    document.body.appendChild(overlay);
-    targetCard.classList.add('spotlight-target');
-
-    // 약간의 딜레이 후 활성화 (DOM paint 보장)
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             overlay.classList.add('active');
-            // 툴팁을 카드 아래 중앙에 배치 (body에 append)
-            const rect = targetCard.getBoundingClientRect();
+            const rect0 = targets[0].getBoundingClientRect();
+            const rect1 = targets[1].getBoundingClientRect();
+            const centerX = (rect0.left + rect1.right) / 2;
+            const bottomY = Math.max(rect0.bottom, rect1.bottom);
             tooltip.style.position = 'fixed';
-            tooltip.style.left = (rect.left + rect.width / 2) + 'px';
-            tooltip.style.top = (rect.bottom + 14) + 'px';
+            tooltip.style.left = centerX + 'px';
+            tooltip.style.top = (bottomY + 14) + 'px';
             document.body.appendChild(tooltip);
             requestAnimationFrame(() => tooltip.classList.add('active'));
         });
     });
 
+    let dismissed = false;
     function dismissSpotlight() {
+        if (dismissed) return;
+        dismissed = true;
         overlay.classList.remove('active');
         tooltip.classList.remove('active');
-        targetCard.classList.remove('spotlight-target');
+        targets.forEach(card => card.classList.remove('spotlight-target'));
         setTimeout(() => {
             overlay.remove();
             tooltip.remove();
         }, 500);
     }
 
-    // 오버레이 클릭 시 해제
     overlay.addEventListener('click', dismissSpotlight);
-    // 카드에 마우스 올려도 해제
-    targetCard.addEventListener('mouseenter', dismissSpotlight, { once: true });
-    // 카드 클릭 시에도 해제
-    targetCard.addEventListener('click', dismissSpotlight, { once: true });
-    // 4초 후 자동 해제
+    targets.forEach(card => {
+        card.addEventListener('mouseenter', dismissSpotlight, { once: true });
+        card.addEventListener('click', dismissSpotlight, { once: true });
+    });
     setTimeout(dismissSpotlight, 4000);
 }
 

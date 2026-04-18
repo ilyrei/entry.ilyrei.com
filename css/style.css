@@ -481,6 +481,12 @@ button {
     margin: 0 auto;
 }
 
+.section-disclaimer {
+    font-size: 12px;
+    color: #c0c0c0;
+    margin-bottom: 8px;
+}
+
 .section-heading {
     position: relative;
     z-index: 10;
