@@ -1,0 +1,1020 @@
+/* ===== Reset & Base (Entry 기본 스타일) ===== */
+body, p, h1, h2, h3, h4, h5, h6, ul, ol, li, dl, dt, dd,
+table, th, td, form, fieldset, legend, input, textarea, button, select {
+    margin: 0;
+    padding: 0;
+    -webkit-text-size-adjust: none;
+    color: #2c313d;
+    font-family: NanumSquareWebFont, '나눔고딕', NanumGothic, -apple-system,
+        '맑은 고딕', 'Malgun Gothic', '돋움', dotum, Helvetica, arial, sans-serif;
+}
+
+html, body {
+    font-family: NanumSquareWebFont, '나눔고딕', NanumGothic, -apple-system,
+        '맑은 고딕', 'Malgun Gothic', '돋움', dotum, Helvetica, arial, sans-serif;
+    min-width: 320px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+img, fieldset, button { border: 0; }
+img, fieldset, button, video, iframe { vertical-align: top; }
+ul, ol { list-style: none; }
+em, address, i { font-style: normal; }
+a, a:hover, a:active, a:focus { text-decoration: none; color: inherit; }
+
+button {
+    background-color: transparent;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.blind {
+    overflow: hidden;
+    position: absolute;
+    top: 0; left: 0;
+    margin: -1px;
+    padding: 0;
+    width: 1px; height: 1px;
+    border: 0;
+    clip: rect(0,0,0,0);
+}
+
+[role='button'] { cursor: pointer; }
+
+/* ===== 메인 헤더 ===== */
+.header {
+    position: relative;
+    z-index: 100;
+    min-width: 1200px;
+    background: #fff;
+}
+
+.header::after {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    z-index: 20;
+    height: 2px;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.12);
+    content: '';
+}
+
+.header-inner {
+    position: relative;
+    width: 1062px;
+    height: 90px;
+    margin: 0 auto;
+}
+
+.header-inner::after {
+    display: block;
+    clear: both;
+    content: '';
+}
+
+/* 로고 */
+.header-logo {
+    float: left;
+    padding: 32px 0;
+}
+
+.header-logo a {
+    display: block;
+    width: 126px;
+    height: 26px;
+    background-image: url(https://playentry.org/img/CommonLogo.svg);
+    background-size: 126px auto;
+    background-repeat: no-repeat;
+}
+
+/* 네비게이션 */
+.header-nav {
+    float: left;
+    margin-left: 86px;
+}
+
+.nav-list {
+    overflow: hidden;
+}
+
+.nav-item {
+    float: left;
+    width: 144px;
+}
+
+.nav-item a {
+    display: inline-block;
+    position: relative;
+    padding: 37px 10px 37px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+    line-height: 16px;
+}
+
+.nav-item a::after {
+    position: absolute;
+    left: 0; bottom: 0; right: 0;
+    height: 6px;
+    background-color: #16d8a3;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+    content: '';
+}
+
+.nav-item a:hover::after,
+.nav-item.active a::after {
+    transform: scaleX(1) translateX(0);
+}
+
+.nav-item a:hover {
+    color: #000;
+}
+
+/* 헤더 우측 유틸 */
+.header-utils {
+    position: absolute;
+    right: -10px;
+    top: 19px;
+    z-index: 30;
+}
+
+.header-utils::after {
+    display: block;
+    clear: both;
+    content: '';
+}
+
+.util-btn {
+    float: left;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    margin: 6px 0 0 7px;
+}
+
+.util-btn:first-of-type {
+    margin-left: 0;
+}
+
+/* 검색 버튼 */
+.btn-search {
+    display: block;
+    height: 40px;
+    background-color: #fff;
+    border-radius: 50%;
+}
+
+.btn-search::before {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    background: url(https://playentry.org/img/IcoTopSearch.svg) no-repeat;
+    background-size: 20px auto;
+    content: '';
+    z-index: 10;
+}
+
+.btn-search::after {
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    border-radius: 50%;
+    background-color: rgba(0,0,0,0.06);
+    transition: 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: scale(0);
+    opacity: 0;
+    z-index: 1;
+    content: '';
+}
+
+.btn-search:hover::after {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* 알림 버튼 */
+.btn-alarm {
+    display: block;
+    height: 40px;
+    background-color: #fff;
+    border-radius: 50%;
+}
+
+.btn-alarm::before {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    background: url(https://playentry.org/img/IcoTopAlarm.svg) no-repeat;
+    background-size: 20px auto;
+    content: '';
+    z-index: 10;
+}
+
+.btn-alarm::after {
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    border-radius: 50%;
+    background-color: rgba(0,0,0,0.06);
+    transition: 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: scale(0);
+    opacity: 0;
+    z-index: 1;
+    content: '';
+}
+
+.btn-alarm:hover::after {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* 프로필 아바타 */
+.util-btn-profile {
+    width: 52px;
+    height: 52px;
+    margin-top: 0 !important;
+}
+
+.btn-profile-avatar {
+    display: block;
+    position: relative;
+    height: 52px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.btn-profile-avatar .profile-img {
+    overflow: hidden;
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 32px;
+    height: 32px;
+    margin: -16px 0 0 -16px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: 50% 50%;
+    background-color: #c8e6c9;
+    z-index: 10;
+}
+
+.btn-profile-avatar::after {
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    border-radius: 50%;
+    background-color: rgba(0,0,0,0.06);
+    transition: 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: scale(0);
+    opacity: 0;
+    z-index: 1;
+    content: '';
+}
+
+.btn-profile-avatar:hover::after {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* ===== 메가메뉴 ===== */
+.mega-menu {
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    left: 0; right: 0;
+    top: 90px;
+    background-color: #fff;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.06);
+    z-index: 10;
+    height: 0;
+    transition: height 0.3s;
+}
+
+.header:hover .mega-menu {
+    display: block;
+    height: 277px;
+}
+
+.mega-menu-inner {
+    position: relative;
+    width: 1062px;
+    height: 277px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding-left: 213px;
+}
+
+.mega-menu-inner::after {
+    display: block;
+    clear: both;
+    content: '';
+}
+
+.mega-sidebar {
+    position: absolute;
+    left: 0; top: 0;
+    width: 144px;
+    padding-top: 10px;
+}
+
+.mega-sidebar ul {
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.mega-sidebar ul > li {
+    margin-top: 24px;
+}
+
+.mega-sidebar ul > li > a {
+    color: #979797;
+}
+
+.mega-sidebar ul > li > a:hover {
+    cursor: pointer;
+    font-weight: 600;
+    color: #000;
+}
+
+.mega-col {
+    float: left;
+    width: 144px;
+    padding-top: 10px;
+}
+
+.mega-col ul {
+    overflow: hidden;
+    font-size: 15px;
+    line-height: 15px;
+}
+
+.mega-col ul > li {
+    margin-top: 24px;
+}
+
+.mega-col ul > li > a {
+    color: #979797;
+}
+
+.mega-col ul > li > a:hover {
+    cursor: pointer;
+    font-weight: 600;
+    color: #000;
+}
+
+.badge-beta {
+    display: inline-block;
+    height: 18px;
+    margin-left: 4px;
+    padding: 0 10px;
+    border-radius: 9px;
+    background-color: #ff4320;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 18px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* ===== 서브 헤더 (탭) ===== */
+.sub-header {
+    position: relative;
+    z-index: 10;
+    min-width: 1200px;
+    background: #fff;
+}
+
+.sub-header::after {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    z-index: 20;
+    height: 2px;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.12);
+    content: '';
+}
+
+.sub-header-inner {
+    position: relative;
+    width: 1062px;
+    height: 61px;
+    margin: 0 auto;
+}
+
+.sub-nav {
+    margin-left: 0;
+}
+
+.sub-nav-list {
+    overflow: hidden;
+}
+
+.sub-nav-item {
+    float: left;
+    width: auto;
+}
+
+.sub-nav-item a {
+    display: inline-block;
+    position: relative;
+    padding: 27px 27px 18px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #d8d8d8;
+    line-height: 16px;
+}
+
+.sub-nav-item a::after {
+    position: absolute;
+    left: 0; bottom: 0; right: 0;
+    height: 4px;
+    background-color: #16d8a3;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+    content: '';
+}
+
+.sub-nav-item a:hover {
+    color: #000;
+}
+
+.sub-nav-item a:hover::after {
+    transform: scaleX(1) translateX(0);
+}
+
+.sub-nav-item.active a {
+    color: #000;
+}
+
+.sub-nav-item.active a::after {
+    transform: scaleX(1) translateX(0);
+}
+
+/* ===== 메인 콘텐츠 ===== */
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    height: max-content;
+    min-width: 1200px;
+    background: #fff;
+}
+
+.main-inner {
+    width: 1062px;
+    margin: 0 auto;
+}
+
+/* ===== 스태프 선정 작품 섹션 ===== */
+.section-works {
+    position: relative;
+    margin-top: 100px;
+}
+
+.section-works-inner {
+    position: relative;
+    width: 1062px;
+    margin: 0 auto;
+}
+
+.section-heading {
+    position: relative;
+    z-index: 10;
+    font-size: 28px;
+    font-weight: 600;
+    color: #000;
+    line-height: 28px;
+}
+
+.section-desc {
+    position: relative;
+    z-index: 10;
+    margin-top: 14px;
+    font-size: 18px;
+    color: #555;
+    line-height: 18px;
+}
+
+.btn-more {
+    position: absolute;
+    right: 0;
+    top: 15px;
+    z-index: 10;
+    padding: 0 27px;
+    border-radius: 18px;
+    border: 1px solid #e2e2e2;
+    background-color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    line-height: 36px;
+    text-align: center;
+    display: inline-block;
+}
+
+.btn-more:hover {
+    border-color: #ccc;
+    color: #333;
+}
+
+/* ===== 프로젝트 카드 목록 ===== */
+.project-list {
+    margin-top: 27px;
+    overflow: hidden;
+    display: flex;
+    gap: 18px;
+}
+
+.project-list::after {
+    display: block;
+    clear: both;
+    content: '';
+}
+
+.project-card {
+    flex: 1;
+    min-width: 0;
+    border-radius: 6px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.08);
+    border: 1px solid #f2f2f2;
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.project-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 6px 16px 0 rgba(0,0,0,0.12);
+}
+
+/* 카드 썸네일 */
+.card-thumb {
+    position: relative;
+    display: block;
+    height: 0;
+    padding-bottom: 62.5%;
+    overflow: hidden;
+    background-color: #f5f5f5;
+    background-size: cover;
+    background-position: 50% 50%;
+}
+
+.card-thumb::before {
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 6px 6px 0 0;
+    content: '';
+    z-index: 2;
+}
+
+.card-thumb img:not(.card-badge-img) {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-thumb-placeholder {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+}
+
+/* 카테고리 라벨 */
+.card-category {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    z-index: 3;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background-color: rgba(0,0,0,0.5);
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 14px;
+}
+
+/* 스선 뱃지 */
+.card-badge-img {
+    position: absolute;
+    right: 8px;
+    bottom: 0;
+    z-index: 3;
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+/* 카드 콘텐츠 */
+.card-content {
+    padding: 16px 14px 14px;
+}
+
+.card-title {
+    display: block;
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c313d;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 16px;
+}
+
+.card-author {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.author-thumb {
+    width: 22px;
+    height: 22px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background-color: #e8e8e8;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.author-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.author-thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #c8f7ed;
+}
+
+.author-thumb-placeholder svg {
+    width: 14px;
+    height: 14px;
+}
+
+.author-name {
+    font-size: 12px;
+    color: #979797;
+    font-weight: 400;
+}
+
+/* 카드 통계 */
+.card-stats {
+    display: flex;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #f5f5f5;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    margin-right: 14px;
+    font-size: 12px;
+    color: #979797;
+    line-height: 12px;
+}
+
+.stat-item svg {
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+    flex-shrink: 0;
+}
+
+.stat-item .stat-icon-view { color: #979797; }
+.stat-item .stat-icon-like { color: #ff5c5c; }
+.stat-item .stat-icon-comment { color: #979797; }
+
+/* ===== 스포트라이트 효과 ===== */
+.spotlight-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.spotlight-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.spotlight-target {
+    position: relative;
+    z-index: 9999 !important;
+    box-shadow: 0 0 0 6px rgba(22, 216, 163, 0.5), 0 0 40px 10px rgba(22, 216, 163, 0.3) !important;
+    border-radius: 6px;
+    transition: box-shadow 0.5s ease;
+}
+
+.spotlight-tooltip {
+    position: fixed;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%) translateY(8px);
+    background: #16d8a3;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(22, 216, 163, 0.4);
+}
+
+.spotlight-tooltip.active {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    animation: tooltipBounce 1.2s ease infinite;
+}
+
+@keyframes tooltipBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    30% { transform: translateX(-50%) translateY(-10px); }
+    50% { transform: translateX(-50%) translateY(-3px); }
+    70% { transform: translateX(-50%) translateY(-7px); }
+}
+
+.spotlight-tooltip::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    margin-left: -6px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #16d8a3;
+}
+
+/* ===== 구분선 ===== */
+.section-divider {
+    margin-top: 0;
+    padding: 0;
+}
+
+.divider-img {
+    width: 100%;
+    display: block;
+}
+
+/* ===== 하단 배너 ===== */
+.bottom-banner {
+    position: relative;
+    margin-top: 80px;
+    overflow: hidden;
+}
+
+.banner-track {
+    display: flex;
+    transition: transform 0.4s ease;
+    cursor: grab;
+    user-select: none;
+}
+
+.banner-track.dragging {
+    transition: none;
+    cursor: grabbing;
+}
+
+.banner-slide {
+    flex: 0 0 100%;
+    min-height: 200px;
+}
+
+.banner-inner {
+    position: relative;
+    width: 1062px;
+    margin: 0 auto;
+    padding: 50px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.banner-text {
+    position: relative;
+    z-index: 2;
+}
+
+.banner-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    line-height: 36px;
+}
+
+.banner-subtitle {
+    margin-top: 12px;
+    font-size: 18px;
+    color: rgba(255,255,255,0.85);
+    line-height: 24px;
+}
+
+.banner-image {
+    position: relative;
+    z-index: 2;
+}
+
+.banner-character-img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+}
+
+.banner-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 0 24px;
+    background: inherit;
+}
+
+.banner-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.banner-dot.active {
+    background-color: #16d8a3;
+}
+
+/* ===== 푸터 ===== */
+.footer {
+    position: relative;
+    min-width: 1062px;
+    padding: 48px 0;
+    background-color: #f9f9f9;
+}
+
+.footer-inner {
+    position: relative;
+    width: 1062px;
+    margin: 0 auto;
+}
+
+.footer-inner::after {
+    display: block;
+    clear: both;
+    content: '';
+}
+
+.footer-logo {
+    float: left;
+    width: 130px;
+    height: 26px;
+    margin-right: 50px;
+    background: url(https://playentry.org/img/CommonFooterLogo.svg) no-repeat;
+    background-size: 130px auto;
+    display: block;
+}
+
+.footer-content {
+    overflow: hidden;
+}
+
+.footer-links {
+    overflow: hidden;
+    margin-left: -27px;
+}
+
+.footer-links li {
+    float: left;
+    margin-left: 27px;
+    font-size: 12px;
+    line-height: 14px;
+}
+
+.footer-links li a {
+    color: #555;
+    font-weight: 400;
+}
+
+.footer-links .bold-link {
+    text-decoration: underline;
+    font-weight: 800;
+}
+
+.footer-desc {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #555;
+    letter-spacing: -0.14px;
+    line-height: 13px;
+    white-space: pre-line;
+}
+
+.footer-address {
+    margin-top: 9px;
+    font-size: 12px;
+    color: #555;
+    letter-spacing: -0.14px;
+    line-height: 13px;
+}
+
+.footer-address em {
+    display: inline-block;
+    position: relative;
+    padding: 0 9px 0 10px;
+    vertical-align: top;
+}
+
+.footer-address em::before {
+    position: absolute;
+    left: 0; top: 0;
+    width: 1px;
+    height: 12px;
+    background-color: #555;
+    content: '';
+}
+
+.footer-address em:first-of-type {
+    padding-left: 0;
+}
+
+.footer-address em:first-of-type::before {
+    display: none;
+}
+
+.footer-address em:last-of-type {
+    font-weight: 600;
+}
+
+.footer-address a {
+    color: #555;
+}
+
+.footer-copyright {
+    margin-top: 18px;
+    font-size: 12px;
+    color: #555;
+    line-height: 14px;
+}
+
+.footer-utils {
+    position: absolute;
+    top: 38px;
+    right: 0;
+    z-index: 1;
+}
+
+.lang-select {
+    display: block;
+    position: relative;
+    width: 108px;
+    height: 31px;
+    padding-left: 12px;
+    box-sizing: border-box;
+    background-color: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    line-height: 29px;
+    cursor: pointer;
+}
+
+.lang-select::after {
+    position: absolute;
+    top: 50%; right: 12px;
+    width: 8px;
+    height: 6px;
+    margin-top: -3px;
+    background: url(https://playentry.org/img/IcoSelectArrow.svg) no-repeat;
+    background-size: 8px auto;
+    content: '';
+}
