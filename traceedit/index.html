@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사본 흔적 편집기 — 엔트리아님</title>
+    <link href="https://entry-cdn.pstatic.net/uploads/fonts/fonts_2023_10.css" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://playentry.org/favicon-32x32.png">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .traceedit-wrapper {
+            max-width: 720px;
+            margin: 48px auto 80px;
+            padding: 0 20px;
+        }
+
+        .traceedit-header {
+            margin-bottom: 32px;
+        }
+
+        .traceedit-header h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #2c313d;
+            margin-bottom: 8px;
+        }
+
+        .traceedit-header p {
+            font-size: 14px;
+            color: #7d8287;
+            line-height: 1.6;
+        }
+
+        .drop-zone {
+            border: 2px dashed #d1d4d8;
+            border-radius: 12px;
+            padding: 48px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            background: #fafafa;
+            margin-bottom: 28px;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: #4f80ff;
+            background: #f0f4ff;
+        }
+
+        .drop-zone .dz-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .drop-zone .dz-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2c313d;
+            margin-bottom: 6px;
+        }
+
+        .drop-zone .dz-sub {
+            font-size: 13px;
+            color: #9da3aa;
+        }
+
+        .drop-zone input[type="file"] {
+            display: none;
+        }
+
+        .editor-panel {
+            display: none;
+            background: #fff;
+            border: 1px solid #e4e6e9;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .editor-panel.visible {
+            display: block;
+        }
+
+        .panel-top {
+            padding: 16px 20px;
+            background: #f5f7fa;
+            border-bottom: 1px solid #e4e6e9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-filename {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2c313d;
+            flex: 1;
+        }
+
+        .btn-reset-file {
+            font-size: 12px;
+            color: #9da3aa;
+            text-decoration: underline;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .panel-body {
+            padding: 24px 20px;
+        }
+
+        .field-group {
+            margin-bottom: 20px;
+        }
+
+        .field-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #7d8287;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .field-badge {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            background: #fff0e6;
+            color: #e05c00;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d4d8;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Consolas', 'D2Coding', monospace;
+            color: #2c313d;
+            background: #fff;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        .field-input:focus {
+            border-color: #4f80ff;
+            box-shadow: 0 0 0 3px rgba(79,128,255,0.12);
+        }
+
+        .field-input.mono {
+            font-family: 'Consolas', 'D2Coding', monospace;
+            letter-spacing: 0.04em;
+        }
+
+        .field-input.readonly-look {
+            background: #f5f7fa;
+            color: #9da3aa;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-quick {
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .btn-quick.outline {
+            border-color: #d1d4d8;
+            color: #555;
+            background: #fff;
+        }
+
+        .btn-quick.outline:hover {
+            background: #f0f0f0;
+        }
+
+        .btn-quick.danger {
+            border-color: #ffcfcf;
+            color: #c0392b;
+            background: #fff8f8;
+        }
+
+        .btn-quick.danger:hover {
+            background: #ffe0e0;
+        }
+
+        .btn-quick.primary {
+            border-color: #4f80ff;
+            color: #fff;
+            background: #4f80ff;
+        }
+
+        .btn-quick.primary:hover {
+            background: #3a6de0;
+            border-color: #3a6de0;
+        }
+
+        .field-divider {
+            border: none;
+            border-top: 1px solid #e4e6e9;
+            margin: 24px 0;
+        }
+
+        .panel-footer {
+            padding: 16px 20px;
+            background: #f5f7fa;
+            border-top: 1px solid #e4e6e9;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-save {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            background: #4f80ff;
+            color: #fff;
+            transition: background 0.15s;
+        }
+
+        .btn-save:hover {
+            background: #3a6de0;
+        }
+
+        .btn-save:disabled {
+            background: #b0bec5;
+            cursor: not-allowed;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #2c313d;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 9999;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .error-msg {
+            color: #c0392b;
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .error-msg.visible {
+            display: block;
+        }
+
+        .sub-header { display: none; }
+    </style>
+</head>
+<body>
+
+    <header class="header" role="banner">
+        <div class="header-inner">
+            <h1 class="header-logo">
+                <a href="/"><span class="blind">Entry</span></a>
+            </h1>
+            <nav class="header-nav" role="navigation">
+                <ul class="nav-list" role="tablist">
+                    <li class="nav-item" role="tab"><a href="https://playentry.org/learn">생각하기</a></li>
+                    <li class="nav-item" role="tab"><a href="https://playentry.org/ws/new">만들기</a></li>
+                    <li class="nav-item" role="tab"><a href="https://playentry.org/project/list/popular">공유하기</a></li>
+                    <li class="nav-item" role="tab"><a href="https://playentry.org/challenge">챌린지</a></li>
+                    <li class="nav-item" role="tab"><a href="https://playentry.org/community/qna/list/1">커뮤니티</a></li>
+                </ul>
+            </nav>
+            <div class="header-utils">
+                <div class="util-btn">
+                    <a class="btn-search" role="button" href="https://playentry.org/search"><span class="blind">Search</span></a>
+                </div>
+                <div class="util-btn">
+                    <a class="btn-alarm" role="button" href="https://playentry.org"><span class="blind">Alarm</span></a>
+                </div>
+                <div class="util-btn util-btn-profile">
+                    <a class="btn-profile-avatar" role="button">
+                        <em class="profile-img" style="background-image:url(https://playentry.org/img/DefaultCardThmb.svg)"></em>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="traceedit-wrapper">
+        <div class="traceedit-header">
+            <h2>사본 흔적 편집기</h2>
+            <p>
+                엔트리 .ent 파일에 기록된 <code>parent</code> · <code>origin</code> ID와 작품 이름을 편집합니다.<br>
+                모든 처리는 브라우저에서 이루어지며, 서버로 파일이 전송되지 않습니다.
+            </p>
+        </div>
+
+        <div class="drop-zone" id="dropZone">
+            <div class="dz-icon">📦</div>
+            <div class="dz-title">.ent 파일을 여기에 드래그하거나 클릭하세요</div>
+            <div class="dz-sub">엔트리 작품 파일 (.ent)</div>
+            <input type="file" id="fileInput" accept=".ent">
+        </div>
+        <p class="error-msg" id="errorMsg"></p>
+
+        <div class="editor-panel" id="editorPanel">
+            <div class="panel-top">
+                <span class="panel-filename" id="panelFilename">파일명.ent</span>
+                <button class="btn-reset-file" id="btnResetFile">다른 파일 선택</button>
+            </div>
+            <div class="panel-body">
+
+                <div class="field-group">
+                    <div class="field-label">
+                        parent ID
+                        <span class="field-badge">직접 복사한 원본</span>
+                    </div>
+                    <input type="text" class="field-input mono" id="fieldParent"
+                           placeholder="24자리 hex (비워두면 빈 값으로 저장)" maxlength="24">
+                    <div class="quick-actions">
+                        <button class="btn-quick danger" onclick="clearField('fieldParent')">초기화 (지우기)</button>
+                        <button class="btn-quick outline" onclick="freshField('fieldParent')">새 랜덤 ID</button>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <div class="field-label">
+                        origin ID
+                        <span class="field-badge">최초 원본</span>
+                    </div>
+                    <input type="text" class="field-input mono" id="fieldOrigin"
+                           placeholder="24자리 hex (비워두면 빈 값으로 저장)" maxlength="24">
+                    <div class="quick-actions">
+                        <button class="btn-quick danger" onclick="clearField('fieldOrigin')">초기화 (지우기)</button>
+                        <button class="btn-quick outline" onclick="freshField('fieldOrigin')">새 랜덤 ID</button>
+                        <button class="btn-quick outline" onclick="syncOriginToParent()">parent와 동일하게</button>
+                    </div>
+                </div>
+
+                <hr class="field-divider">
+
+                <div class="field-group">
+                    <div class="field-label">작품 이름</div>
+                    <input type="text" class="field-input" id="fieldName" placeholder="작품 이름">
+                </div>
+
+            </div>
+            <div class="panel-footer">
+                <button class="btn-save" id="btnSave">수정된 .ent 다운로드</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+
+    <script>
+    let T=[],P=null,N='';const $=e=>document.getElementById(e),D=new TextDecoder('utf-8'),E=new TextEncoder();function showToast(e,t=2200){const o=$('toast');o.textContent=e,o.classList.add('show'),setTimeout(()=>o.classList.remove('show'),t)}function showError(e){const t=$('errorMsg');t.textContent=e,t.classList.toggle('visible',!!e)}function randomHex24(){const e=new Uint8Array(12);return crypto.getRandomValues(e),Array.from(e,t=>t.toString(16).padStart(2,'0')).join('')}function clearField(e){$(e).value=''}function freshField(e){$(e).value=randomHex24()}function syncOriginToParent(){$('fieldOrigin').value=$('fieldParent').value}function r(e,t,o){let n=t;for(;n<t+o&&0!==e[n];)n++;return D.decode(e.slice(t,n))}function p(e){const t=[];let o=0;for(;o+512<=e.length;){const n=e.slice(o,o+512);if(n.every(s=>0===s))break;const a=r(n,0,100),i=r(n,124,12),l=parseInt(i.trim(),8)||0,c=String.fromCharCode(n[156]);o+=512;let d=null;'5'!==c&&l>0&&(d=e.slice(o,o+l),o+=Math.ceil(l/512)*512),t.push({name:a,size:l,typeFlag:c,header:n.slice(),data:d})}return t}function b(e){const t=[];for(const o of e){const n=h(o);if(t.push(n),o.data&&o.data.length>0){t.push(o.data);const e=(512-o.data.length%512)%512;e>0&&t.push(new Uint8Array(e))}}return t.push(new Uint8Array(1024)),u(t)}function h(e){const t=new Uint8Array(512),o=E.encode(e.name);t.set(o.slice(0,100),0),w(t,100,8,'5'===e.typeFlag?493:420),w(t,108,8,0),w(t,116,8,0);const n=e.data&&e.data.length||0;w(t,124,12,n),w(t,136,12,0);for(let e=148;e<156;e++)t[e]=32;t[156]=e.typeFlag.charCodeAt(0),t.set(E.encode('ustar  \0'),257);let a=0;for(let e=0;e<512;e++)a+=t[e];return w(t,148,7,a),t[155]=32,t}function w(e,t,o,n){const a=E.encode(n.toString(8).padStart(o-1,'0')+'\0');e.set(a.slice(0,o),t)}function u(e){const t=e.reduce((e,t)=>e+t.length,0),o=new Uint8Array(t);let n=0;for(const t of e)o.set(t,n),n+=t.length;return o}async function l(e){showError(''),N=e.name;try{const t=new Uint8Array(await e.arrayBuffer());let o;try{o=pako.inflate(t)}catch{throw new Error('gzip 압축 해제 실패: 올바른 .ent 파일인지 확인하세요.')}T=p(o);const n=T.find(e=>e.name.endsWith('project.json')&&e.data);if(!n)throw new Error('project.json을 찾을 수 없습니다. 올바른 .ent 파일인지 확인하세요.');P=JSON.parse(D.decode(n.data)),$('fieldParent').value=P.parent||'',$('fieldOrigin').value=P.origin||'',$('fieldName').value=P.name||'',$('panelFilename').textContent=e.name,$('editorPanel').classList.add('visible'),$('dropZone').style.display='none'}catch(e){showError('오류: '+(e.message||e))}}function saveEnt(){if(!P||!T.length)return;P.parent=$('fieldParent').value.trim(),P.origin=$('fieldOrigin').value.trim(),P.name=$('fieldName').value;const e=E.encode(JSON.stringify(P)),t=T.map(t=>t.name.endsWith('project.json')&&t.data?{...t,data:e}:t),o=b(t),n=pako.deflate(o,{level:6,gzip:!0}),a=new Blob([n],{type:'application/octet-stream'}),i=URL.createObjectURL(a),r=document.createElement('a');r.href=i,r.download=N.replace(/\.ent$/i,'')+'_edited.ent',r.click(),URL.revokeObjectURL(i),showToast('저장 완료; 다운로드 시작')}const z=$('dropZone'),f=$('fileInput');z.addEventListener('click',()=>f.click()),z.addEventListener('dragover',e=>{e.preventDefault(),z.classList.add('dragover')}),z.addEventListener('dragleave',()=>{z.classList.remove('dragover')}),z.addEventListener('drop',e=>{e.preventDefault(),z.classList.remove('dragover');const t=e.dataTransfer.files[0];t&&l(t)}),f.addEventListener('change',()=>{f.files[0]&&l(f.files[0])}),$('btnResetFile').addEventListener('click',()=>{T=[],P=null,f.value='',$('editorPanel').classList.remove('visible'),$('dropZone').style.display='',showError('')}),$('btnSave').addEventListener('click',saveEnt);
+    </script>
+
+</body>
+</html>

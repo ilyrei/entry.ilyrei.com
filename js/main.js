@@ -43,7 +43,7 @@ const staffPickedProjects = [
         views: "0",
         likes: 0,
         comments: 0,
-        link: "alert:5월 중 출시"
+        link: "/encrypt"
     },
     {
         id: "proj4",
@@ -58,7 +58,38 @@ const staffPickedProjects = [
         views: "0",
         likes: 0,
         comments: 0,
-        link: "alert:5월 중 출시"
+        link: "alert:5월 중 출시",
+        comingSoon: true
+    },
+    {
+        id: "proj5",
+        title: "엔트리 사본 편집기",
+        category: "생활과 도구",
+        badge: "스선",
+        thumbnail: "sabon.jpg",
+        thumbnailBg: "#1a3a5e",
+        thumbnailEmoji: "🔧",
+        author: "ilyrei",
+        authorThumb: null,
+        views: "0",
+        likes: 0,
+        comments: 0,
+        link: "/traceedit"
+    },
+    {
+        id: "proj6",
+        title: "ChatGPT in Entry",
+        category: "생활과 도구",
+        badge: "스선",
+        thumbnail: "chatgpt.jpg",
+        thumbnailBg: "#10a37f",
+        thumbnailEmoji: "🤖",
+        author: "ilyrei",
+        authorThumb: null,
+        views: "0",
+        likes: 0,
+        comments: 0,
+        link: "/chatgpt"
     }
 ];
 
@@ -100,8 +131,10 @@ function createProjectCard(project) {
         authorThumbHTML = `<div class="author-thumb-placeholder">${svgIcons.userDefault}</div>`;
     }
 
+    const comingSoonClass = project.comingSoon ? ' coming-soon' : '';
+
     return `
-        <article class="project-card" data-link="${project.link}">
+        <article class="project-card${comingSoonClass}" data-link="${project.link}">
             <div class="card-thumb">
                 ${thumbHTML}
                 <span class="card-category">${project.category}</span>
@@ -127,15 +160,26 @@ function createProjectCard(project) {
 function renderProjectCards(containerId, projects) {
     const container = document.getElementById(containerId);
     if (!container) return;
-    container.innerHTML = projects.map(createProjectCard).join('');
+
+    const clip = document.createElement('div');
+    clip.className = 'project-carousel-clip';
+
+    const track = document.createElement('div');
+    track.className = 'project-track';
+    track.innerHTML = projects.map(createProjectCard).join('');
+
+    clip.appendChild(track);
+    container.appendChild(clip);
 
     // 카드 클릭 이벤트
-    container.querySelectorAll('.project-card').forEach(card => {
+    track.querySelectorAll('.project-card').forEach(card => {
         card.addEventListener('click', () => {
             const link = card.dataset.link;
             if (!link || link === '#') return;
             if (link.startsWith('alert:')) {
                 alert(link.substring(6));
+            } else if (link.startsWith('/')) {
+                window.location.href = link;
             } else {
                 window.open(link, '_blank');
             }
@@ -166,21 +210,23 @@ function initNavHover() {
     });
 }
 
-// 스포트라이트 효과 (환영합니다 + 엔이 매크로 카드)
+// 스포트라이트 효과 (카드 2장 + 더보기 버튼 동시) — 최초 방문 시 1회만
 function initSpotlight() {
-    const cards = document.querySelectorAll('.project-card');
-    const targets = [cards[0], cards[1]]; // 1번째 + 2번째 카드
-    if (!targets[0] || !targets[1]) return;
+    if (localStorage.getItem('spotlight-seen')) return;
 
-    // 오버레이 생성
+    const cards = document.querySelectorAll('.project-card');
+    const btnMore = document.getElementById('btn-more-all');
+    const projectClip = document.querySelector('.project-carousel-clip');
+    const targets = [cards[0], cards[1], btnMore].filter(Boolean);
+    if (targets.length < 2) return;
+
     const overlay = document.createElement('div');
     overlay.className = 'spotlight-overlay';
     document.body.appendChild(overlay);
 
-    // 두 카드 모두 spotlight-target
-    targets.forEach(card => card.classList.add('spotlight-target'));
+    if (projectClip) projectClip.classList.add('spotlight-host-active');
+    targets.forEach(el => el.classList.add('spotlight-target'));
 
-    // 툴팁은 두 카드 사이 아래 중앙에 배치
     const tooltip = document.createElement('div');
     tooltip.className = 'spotlight-tooltip';
     tooltip.textContent = '클릭해서 더 알아보기';
@@ -204,9 +250,11 @@ function initSpotlight() {
     function dismissSpotlight() {
         if (dismissed) return;
         dismissed = true;
+        localStorage.setItem('spotlight-seen', '1');
         overlay.classList.remove('active');
         tooltip.classList.remove('active');
-        targets.forEach(card => card.classList.remove('spotlight-target'));
+        if (projectClip) projectClip.classList.remove('spotlight-host-active');
+        targets.forEach(el => el.classList.remove('spotlight-target'));
         setTimeout(() => {
             overlay.remove();
             tooltip.remove();
@@ -214,14 +262,114 @@ function initSpotlight() {
     }
 
     overlay.addEventListener('click', dismissSpotlight);
-    targets.forEach(card => {
-        card.addEventListener('mouseenter', dismissSpotlight, { once: true });
-        card.addEventListener('click', dismissSpotlight, { once: true });
+    targets.forEach(el => {
+        el.addEventListener('mouseenter', dismissSpotlight, { once: true });
+        el.addEventListener('click', dismissSpotlight, { once: true });
     });
     setTimeout(dismissSpotlight, 4000);
 }
 
-// 배너 캐러셀 (슬라이드 + 마우스 드래그)
+// 회전초밥 캐러셀 (페이지 로드 시 바로 시작)
+function startProjectCarousel() {
+    const list = document.getElementById('staff-cards');
+    const track = list && list.querySelector('.project-track');
+    if (!track || track.children.length <= 4) return;
+
+    const slideWidth = 252 + 18; // card width + gap = 270px
+    let isAnimating = false;
+
+    function rotateOnce() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        track.style.transition = 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)';
+        track.style.transform = `translateX(-${slideWidth}px)`;
+
+        track.addEventListener('transitionend', function () {
+            track.appendChild(track.firstElementChild);
+            track.style.transition = 'none';
+            track.style.transform = 'translateX(0)';
+            track.offsetHeight; // force reflow
+            isAnimating = false;
+        }, { once: true });
+    }
+
+    setInterval(rotateOnce, 3000);
+}
+
+// 전체 목록 모달
+function openProjectsModal() {
+    const overlay = document.createElement('div');
+    overlay.className = 'projects-modal-overlay';
+
+    const modal = document.createElement('div');
+    modal.className = 'projects-modal';
+
+    const header = document.createElement('div');
+    header.className = 'modal-header';
+    header.innerHTML = `
+        <h3 class="modal-title">스태프 선정 작품</h3>
+        <button class="modal-close" aria-label="닫기">×</button>
+    `;
+
+    const list = document.createElement('ul');
+    list.className = 'modal-project-list';
+
+    staffPickedProjects.forEach(project => {
+        const item = document.createElement('li');
+        item.className = 'modal-project-item' + (project.comingSoon ? ' coming-soon' : '');
+
+        let thumbHTML;
+        if (project.thumbnail) {
+            thumbHTML = `<img src="${project.thumbnail}" alt="${project.title}">`;
+        } else {
+            thumbHTML = `<span style="font-size:26px">${project.thumbnailEmoji || '📄'}</span>`;
+        }
+
+        item.innerHTML = `
+            <div class="modal-item-thumb" style="background:${project.thumbnailBg || '#f0f0f0'}">${thumbHTML}</div>
+            <div class="modal-item-info">
+                <div class="modal-item-title">${project.title}</div>
+                <div class="modal-item-meta">
+                    <span class="modal-item-category">${project.category}</span>
+                    <span class="modal-item-author">${project.author}</span>
+                </div>
+            </div>
+            <span class="modal-item-arrow">›</span>
+        `;
+
+        item.addEventListener('click', () => {
+            const link = project.link;
+            if (!link || link === '#') return;
+            if (link.startsWith('alert:')) {
+                alert(link.substring(6));
+            } else if (link.startsWith('/')) {
+                window.location.href = link;
+            } else {
+                window.open(link, '_blank');
+            }
+        });
+
+        list.appendChild(item);
+    });
+
+    modal.appendChild(header);
+    modal.appendChild(list);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    requestAnimationFrame(() => overlay.classList.add('active'));
+
+    function closeModal() {
+        overlay.classList.remove('active');
+        setTimeout(() => overlay.remove(), 300);
+    }
+
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+    header.querySelector('.modal-close').addEventListener('click', closeModal);
+}
+
+
 function initBannerCarousel() {
     const track = document.querySelector('.banner-track');
     const slides = document.querySelectorAll('.banner-slide');
@@ -319,6 +467,19 @@ document.addEventListener('DOMContentLoaded', () => {
     initTabs();
     initNavHover();
     initBannerCarousel();
+
+    // 회전초밥 캐러셀 바로 시작
+    startProjectCarousel();
+
+    // 더보기 버튼 → 전체 목록 모달
+    const btnMore = document.getElementById('btn-more-all');
+    if (btnMore) {
+        btnMore.addEventListener('click', e => {
+            e.preventDefault();
+            openProjectsModal();
+        });
+    }
+
     // 페이지 로드 후 0.5초 뒤 스포트라이트 시작
     setTimeout(initSpotlight, 500);
 });
